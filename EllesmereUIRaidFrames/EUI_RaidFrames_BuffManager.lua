@@ -1148,17 +1148,20 @@ function ns.BM_UpdateSimpleGrid(button, unit, db, updateInfo)
         local iid = auraData.auraInstanceID
         local tex = auraData.icon
         local matched = false
+        local matchedSpellId
         if sid and iid then
             if not issecretvalue(sid) then
                 local psid = PRIMARY_BY_ALT[sid] or sid
                 if simpleTrackedSpellIDs[psid] and not seen[psid] then
                     matched = true
+                    matchedSpellId = psid
                     seen[psid] = true
                 end
             else
                 local matchedSid = MatchSecretAuraSimple(unit, iid)
                 if matchedSid and not seen[matchedSid] then
                     matched = true
+                    matchedSpellId = matchedSid
                     seen[matchedSid] = true
                     if not tex then tex = SECRET_SPELL_ICONS[matchedSid] or 136243 end
                 end
@@ -1205,6 +1208,9 @@ function ns.BM_UpdateSimpleGrid(button, unit, db, updateInfo)
                     icon._borderFrame:Hide()
                 end
             end
+
+            -- Store aura identity for tooltip on hover
+            icon._spellId = matchedSpellId
 
             icon:Show()
         end
@@ -1616,6 +1622,9 @@ function ns.BM_UpdateIndicators(button, unit, db, updateInfo)
                             end
 
                             f:Show()
+                            -- Store aura identity for tooltip on hover
+                            f._spellId        = sid
+                            f._auraInstanceID = aura.auraInstanceID
                             spellIdx = spellIdx + 1
                         end
                     end
